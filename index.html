@@ -1,0 +1,2665 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Predisposition Index Calculator</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #090b10;
+      color: #f4f4f5;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(1000px, 92%);
+      margin: auto;
+      padding: 45px 0;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.4rem;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #858995;
+      margin-bottom: 12px;
+    }
+
+    .population-note {
+      text-align: center;
+      color: #666b78;
+      font-size: 0.82rem;
+      margin-bottom: 35px;
+    }
+
+    .card {
+      background: #141720;
+      border: 1px solid #282c37;
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .input-group {
+      margin: 28px 0;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 9px;
+    }
+
+    .label {
+      font-weight: 650;
+    }
+
+    .z-value {
+      color: #a78bfa;
+      font-weight: 700;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #373b48;
+      border-radius: 9px;
+      background: #0d0f15;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input[type="number"]:focus {
+      border-color: #8b5cf6;
+    }
+
+    .input-error {
+      color: #ef4444;
+      font-size: 0.82rem;
+      margin-top: 7px;
+      min-height: 0;
+    }
+
+    input.invalid {
+      border-color: #ef4444;
+    }
+
+    .conversion {
+      margin-top: 9px;
+      color: #777d8a;
+      font-size: 0.85rem;
+    }
+
+    .conversion strong {
+      color: #a78bfa;
+    }
+
+    /* RESULT */
+
+    .result {
+      text-align: center;
+    }
+
+    .pi {
+      font-size: 5.5rem;
+      line-height: 1;
+      font-weight: 850;
+      color: #a78bfa;
+    }
+
+    .population-percentile {
+      color: #858a96;
+      font-size: 1rem;
+      margin-top: 8px;
+    }
+
+    .population-percentile strong {
+      color: #a78bfa;
+    }
+
+    .rarity-display {
+      margin-top: 5px;
+    }
+
+    .rarity-display strong {
+      color: #a78bfa;
+    }
+
+    .gauge {
+      height: 18px;
+      width: 100%;
+      background: #252936;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 30px;
+    }
+
+    .gauge-fill {
+      height: 100%;
+      width: 50%;
+      border-radius: 20px;
+
+      background: linear-gradient(
+        90deg,
+        #ef4444,
+        #f97316,
+        #eab308,
+        #22c55e,
+        #06b6d4,
+        #8b5cf6
+      );
+
+      transition: width 0.3s ease;
+    }
+
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      color: #666b78;
+      font-size: 0.75rem;
+      margin-top: 5px;
+    }
+
+    /* BREAKDOWN */
+
+    .breakdown {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .breakdown-item {
+      background: #0d0f15;
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .breakdown-name {
+      color: #858a96;
+      font-size: 0.85rem;
+      margin-bottom: 7px;
+    }
+
+    .breakdown-score {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .z-small {
+      color: #737987;
+      font-size: 0.78rem;
+      margin-top: 5px;
+    }
+
+    .overall {
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 25px;
+      border-top: 1px solid #292d38;
+    }
+
+    .overall-label {
+      color: #858a96;
+    }
+
+    .overall-score {
+      display: block;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-top: 5px;
+    }
+
+    /* TABLE */
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #292d38;
+    }
+
+    th {
+      color: #a78bfa;
+    }
+
+    /* INFO */
+
+    .info {
+      color: #858a96;
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 650px) {
+
+      .container {
+        padding: 30px 0;
+      }
+
+      h1 {
+        font-size: 1.9rem;
+      }
+
+      .pi {
+        font-size: 4.2rem;
+      }
+
+      .breakdown {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 21px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+  <!-- TITLE -->
+
+  <h1>
+    Predisposition Index
+  </h1>
+
+  <p class="subtitle">
+    IQ · Height · Face
+  </p>
+
+  <p class="population-note">
+    Percentile estimates are based on worldwide male population data
+    for ages 18–30.
+  </p>
+
+
+  <!-- INPUT CARD -->
+
+  <div class="card">
+
+    <h2>
+      Enter Your Values
+    </h2>
+
+
+    <!-- IQ -->
+
+    <div class="input-group">
+
+      <div class="label-row">
+
+        <span class="label">
+          IQ
+        </span>
+
+        <span class="z-value">
+          Z =
+          <span id="iqZ">0.00</span>
+        </span>
+
+      </div>
+
+
+      <input
+        type="number"
+        id="iqInput"
+        min="25"
+        max="175"
+        step="0.1"
+        value="100"
+      >
+
+      <div
+        class="input-error"
+        id="iqError"
+      ></div>
+
+
+      <div class="conversion">
+
+        Estimated percentile:
+
+        <strong id="iqPercentile">
+          50.000%
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- HEIGHT -->
+
+    <div class="input-group">
+
+      <div class="label-row">
+
+        <span class="label">
+          Height (cm)
+        </span>
+
+        <span class="z-value">
+          Z =
+          <span id="heightZ">0.00</span>
+        </span>
+
+      </div>
+
+
+      <input
+        type="number"
+        id="heightInput"
+        min="134.5"
+        max="208.5"
+        step="0.1"
+        value="171.5"
+      >
+
+      <div
+        class="input-error"
+        id="heightError"
+      ></div>
+
+
+      <div class="conversion">
+
+        Estimated percentile:
+
+        <strong id="heightPercentile">
+          50.000%
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- FACE -->
+
+    <div class="input-group">
+
+      <div class="label-row">
+
+        <span class="label">
+          Face Percentile
+        </span>
+
+        <span class="z-value">
+          Z =
+          <span id="faceZDisplay">
+            0.00
+          </span>
+        </span>
+
+      </div>
+
+
+      <input
+        type="number"
+        id="faceInput"
+        min="0.0000287"
+        max="99.999971"
+        step="0.000001"
+        value="50"
+        placeholder="Enter percentile"
+      >
+
+      <div
+        class="input-error"
+        id="faceError"
+      ></div>
+
+
+      <div class="conversion">
+
+        Face percentile:
+
+        <strong id="facePercentileDisplay">
+          50.000%
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- RESULT CARD -->
+
+  <div class="card">
+
+    <div class="result">
+
+      <div
+        class="pi"
+        id="pi"
+      >
+        4.00
+      </div>
+
+
+      <div class="population-percentile">
+
+        Population percentile:
+
+        <strong id="piPercentile">
+          ~50.0%
+        </strong>
+
+      </div>
+
+
+      <div class="population-percentile rarity-display">
+
+        <strong id="piRarity">
+          1 in 2 people
+        </strong>
+
+      </div>
+
+
+      <div class="gauge">
+
+        <div
+          class="gauge-fill"
+          id="gauge"
+        ></div>
+
+      </div>
+
+
+      <div class="gauge-labels">
+
+        <span>0</span>
+        <span>2</span>
+        <span>4</span>
+        <span>6</span>
+        <span>8</span>
+
+      </div>
+
+    </div>
+
+
+    <!-- PILLAR BREAKDOWN -->
+
+    <div class="breakdown">
+
+
+      <div class="breakdown-item">
+
+        <div class="breakdown-name">
+          IQ
+        </div>
+
+        <div
+          class="breakdown-score"
+          id="siq"
+        >
+          0.00
+        </div>
+
+        <div class="z-small">
+
+          Z =
+          <span id="iqZ2">0.00</span>
+
+        </div>
+
+      </div>
+
+
+      <div class="breakdown-item">
+
+        <div class="breakdown-name">
+          Height
+        </div>
+
+        <div
+          class="breakdown-score"
+          id="sh"
+        >
+          0.00
+        </div>
+
+        <div class="z-small">
+
+          Z =
+          <span id="heightZ2">0.00</span>
+
+        </div>
+
+      </div>
+
+
+      <div class="breakdown-item">
+
+        <div class="breakdown-name">
+          Face
+        </div>
+
+        <div
+          class="breakdown-score"
+          id="sf"
+        >
+          0.00
+        </div>
+
+        <div class="z-small">
+
+          Z =
+          <span id="faceZ2">0.00</span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="overall">
+
+      <span class="overall-label">
+        Overall S Score
+      </span>
+
+      <strong
+        class="overall-score"
+        id="soverall"
+      >
+        0.00
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <!-- RATING SCALE -->
+
+  <div class="card">
+
+    <h2>
+      Rating Scale
+    </h2>
+
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Rating</th>
+            <th>Z-score</th>
+            <th>Percentile</th>
+            <th>1 in N people</th>
+            <th>S Overall</th>
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr>
+            <td>0.00</td>
+            <td>−8σ</td>
+            <td>0.000000000000062%</td>
+            <td>1 in 1.61 quadrillion</td>
+            <td><strong>−10.63</strong></td>
+          </tr>
+
+          <tr>
+            <td>0.25</td>
+            <td>−7σ</td>
+            <td>0.000000000128%</td>
+            <td>1 in 781 billion</td>
+            <td><strong>−8.0</strong></td>
+          </tr>
+
+          <tr>
+            <td>0.50</td>
+            <td>−6σ</td>
+            <td>0.0000000987%</td>
+            <td>1 in 1.01 billion</td>
+            <td><strong>−7.0</strong></td>
+          </tr>
+
+          <tr>
+            <td>0.75</td>
+            <td>−5σ</td>
+            <td>0.0000287%</td>
+            <td>1 in 3.49 million</td>
+            <td><strong>−5.0</strong></td>
+          </tr>
+
+          <tr>
+            <td>1.00</td>
+            <td>−4σ</td>
+            <td>0.00317%</td>
+            <td>1 in 31,574</td>
+            <td><strong>−4.0</strong></td>
+          </tr>
+
+          <tr>
+            <td>1.50</td>
+            <td>−3σ</td>
+            <td>0.135%</td>
+            <td>1 in 741</td>
+            <td><strong>−2.5</strong></td>
+          </tr>
+
+          <tr>
+            <td>2.00</td>
+            <td>−2σ</td>
+            <td>2.275%</td>
+            <td>1 in 44</td>
+            <td><strong>−1.5</strong></td>
+          </tr>
+
+          <tr>
+            <td>3.00</td>
+            <td>−1σ</td>
+            <td>15.87%</td>
+            <td>1 in 6.30</td>
+            <td><strong>−0.5</strong></td>
+          </tr>
+
+          <tr>
+            <td>4.00</td>
+            <td>0σ</td>
+            <td>50.00%</td>
+            <td>1 in 2</td>
+            <td><strong>0.0</strong></td>
+          </tr>
+
+          <tr>
+            <td>5.00</td>
+            <td>+1σ</td>
+            <td>84.13%</td>
+            <td>1 in 6.30</td>
+            <td><strong>+0.5</strong></td>
+          </tr>
+
+          <tr>
+            <td>6.00</td>
+            <td>+2σ</td>
+            <td>97.725%</td>
+            <td>1 in 44</td>
+            <td><strong>+1.5</strong></td>
+          </tr>
+
+          <tr>
+            <td>6.50</td>
+            <td>+3σ</td>
+            <td>99.865%</td>
+            <td>1 in 741</td>
+            <td><strong>+2.5</strong></td>
+          </tr>
+
+          <tr>
+            <td>7.00</td>
+            <td>+4σ</td>
+            <td>99.99683%</td>
+            <td>1 in 31,574</td>
+            <td><strong>+4.0</strong></td>
+          </tr>
+
+          <tr>
+            <td>7.25</td>
+            <td>+5σ</td>
+            <td>99.9999713%</td>
+            <td>1 in 3.49 million</td>
+            <td><strong>+5.0</strong></td>
+          </tr>
+
+          <tr>
+            <td>7.50</td>
+            <td>+6σ</td>
+            <td>99.9999999013%</td>
+            <td>1 in 1.01 billion</td>
+            <td><strong>+7.0</strong></td>
+          </tr>
+
+          <tr>
+            <td>7.75</td>
+            <td>+7σ</td>
+            <td>99.999999999872%</td>
+            <td>1 in 781 billion</td>
+            <td><strong>+8.0</strong></td>
+          </tr>
+
+          <tr>
+            <td>8.00</td>
+            <td>+8σ</td>
+            <td>99.99999999999994%</td>
+            <td>1 in 1.61 quadrillion</td>
+            <td><strong>+9.9</strong></td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+  <!-- CALCULATION INFORMATION -->
+
+  <div class="card">
+
+    <h2>
+      Calculation
+    </h2>
+
+
+    <div class="info">
+
+      <p>
+        IQ, height, and face are converted using their respective
+        Z-score percentile tables.
+      </p>
+
+
+      <p>
+        The tables define the relationship between each raw measurement,
+        percentile, and standard deviation from the mean.
+      </p>
+
+
+      <p>
+        <strong>Population:</strong>
+        Worldwide males aged 18–30.
+      </p>
+
+
+      <p>
+        <strong>Z-score limits:</strong>
+        −5 ≤ Z ≤ 5
+      </p>
+
+
+      <p>
+
+        <strong>IQ:</strong>
+
+        SIQ = sign(Z) × |Z|<sup>1.5</sup>
+
+      </p>
+
+
+      <p>
+
+        <strong>Height:</strong>
+
+        <br>
+
+        Z ≥ 0:
+        SH = 0.72 × Z<sup>1.14</sup>
+
+        <br>
+
+        Z &lt; 0:
+        SH = −1.45 × |Z|<sup>0.95</sup>
+
+      </p>
+
+
+      <p>
+
+        <strong>Face:</strong>
+
+        SF = sign(Z) × |Z|<sup>1.64</sup>
+
+      </p>
+
+
+      <p>
+
+        <strong>Overall:</strong>
+
+        S = (SIQ + SH + SF) / 3
+
+      </p>
+
+
+      <p>
+
+        <strong>PI transformation:</strong>
+
+        <br>
+
+        The PI score is calculated using piecewise-linear interpolation
+        between the S Overall reference points shown in the rating table.
+
+        <br><br>
+
+        −10.63 ≤ S &lt; −8:
+
+        <br>
+
+        PI = 0.25 × (S + 10.63) / 2.63
+
+        <br><br>
+
+        −8 ≤ S &lt; −7:
+
+        <br>
+
+        PI = 0.25 + 0.25(S + 8)
+
+        <br><br>
+
+        −7 ≤ S &lt; −5:
+
+        <br>
+
+        PI = 0.50 + 0.125(S + 7)
+
+        <br><br>
+
+        −5 ≤ S &lt; −4:
+
+        <br>
+
+        PI = 0.75 + 0.25(S + 5)
+
+        <br><br>
+
+        −4 ≤ S &lt; −2.5:
+
+        <br>
+
+        PI = 1 + (S + 4) / 3
+
+        <br><br>
+
+        −2.5 ≤ S &lt; −1.5:
+
+        <br>
+
+        PI = 1.50 + 0.50(S + 2.5)
+
+        <br><br>
+
+        −1.5 ≤ S &lt; −0.5:
+
+        <br>
+
+        PI = 2 + (S + 1.5)
+
+        <br><br>
+
+        −0.5 ≤ S &lt; 0:
+
+        <br>
+
+        PI = 3 + 2(S + 0.5)
+
+        <br><br>
+
+        0 ≤ S &lt; 0.5:
+
+        <br>
+
+        PI = 4 + 2S
+
+        <br><br>
+
+        0.5 ≤ S &lt; 1.5:
+
+        <br>
+
+        PI = 5 + (S − 0.5)
+
+        <br><br>
+
+        1.5 ≤ S &lt; 2.5:
+
+        <br>
+
+        PI = 6 + 0.50(S − 1.5)
+
+        <br><br>
+
+        2.5 ≤ S &lt; 4:
+
+        <br>
+
+        PI = 6.50 + (S − 2.5) / 3
+
+        <br><br>
+
+        4 ≤ S &lt; 5:
+
+        <br>
+
+        PI = 7 + 0.25(S − 4)
+
+        <br><br>
+
+        5 ≤ S &lt; 7:
+
+        <br>
+
+        PI = 7.25 + 0.125(S − 5)
+
+        <br><br>
+
+        7 ≤ S &lt; 8:
+
+        <br>
+
+        PI = 7.50 + 0.25(S − 7)
+
+        <br><br>
+
+        8 ≤ S ≤ 9.9:
+
+        <br>
+
+        PI = 7.75 + (0.25 / 1.9)(S − 8)
+
+      </p>
+
+
+      <p>
+
+        <strong>S range:</strong>
+
+        −10.63 ≤ S ≤ 9.90
+
+      </p>
+
+
+      <p>
+
+        <strong>PI range:</strong>
+
+        0 ≤ PI ≤ 8
+
+      </p>
+
+
+      <p>
+
+        <strong>Population percentile:</strong>
+
+        The percentile is interpolated between the PI reference
+        points using logarithmic rarity interpolation.
+
+      </p>
+
+
+      <p>
+
+        <strong>Population rarity:</strong>
+
+        The "1 in N" value is calculated directly from the exact
+        population percentile.
+
+      </p>
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
+<script>
+
+
+/* ============================================================
+   PREVENT MOUSE WHEEL FROM CHANGING NUMBER INPUTS
+   ============================================================ */
+
+document
+  .querySelectorAll('input[type="number"]')
+  .forEach(input => {
+
+    input.addEventListener(
+      "wheel",
+      function () {
+        this.blur();
+      }
+    );
+
+  });
+
+
+/* ============================================================
+   IQ Z TABLE
+   ============================================================ */
+
+const iqTable = [
+
+  { z: -5.0, iq: 25, percentile: 0.0000287 },
+  { z: -4.5, iq: 32.5, percentile: 0.000339 },
+  { z: -4.0, iq: 40, percentile: 0.00317 },
+  { z: -3.5, iq: 47.5, percentile: 0.0233 },
+  { z: -3.0, iq: 55, percentile: 0.135 },
+  { z: -2.5, iq: 62.5, percentile: 0.621 },
+  { z: -2.0, iq: 70, percentile: 2.275 },
+  { z: -1.5, iq: 77.5, percentile: 6.681 },
+  { z: -1.0, iq: 85, percentile: 15.866 },
+  { z: -0.5, iq: 92.5, percentile: 30.854 },
+  { z: 0.0, iq: 100, percentile: 50.000 },
+  { z: 0.5, iq: 107.5, percentile: 69.146 },
+  { z: 1.0, iq: 115, percentile: 84.134 },
+  { z: 1.5, iq: 122.5, percentile: 93.319 },
+  { z: 2.0, iq: 130, percentile: 97.725 },
+  { z: 2.5, iq: 137.5, percentile: 99.379 },
+  { z: 3.0, iq: 145, percentile: 99.865 },
+  { z: 3.5, iq: 152.5, percentile: 99.977 },
+  { z: 4.0, iq: 160, percentile: 99.997 },
+  { z: 4.5, iq: 167.5, percentile: 99.99966 },
+  { z: 5.0, iq: 175, percentile: 99.999971 }
+
+];
+
+
+/* ============================================================
+   HEIGHT Z TABLE
+   ============================================================ */
+
+const heightTable = [
+
+  { z: -5.0, percentile: 0.0000287, height: 134.5 },
+  { z: -4.9, percentile: 0.0000483, height: 135.2 },
+  { z: -4.8, percentile: 0.0000794, height: 136.0 },
+  { z: -4.7, percentile: 0.000128, height: 136.7 },
+  { z: -4.6, percentile: 0.000202, height: 137.4 },
+  { z: -4.5, percentile: 0.000339, height: 138.2 },
+  { z: -4.4, percentile: 0.000537, height: 138.9 },
+  { z: -4.3, percentile: 0.000849, height: 139.7 },
+  { z: -4.2, percentile: 0.00130, height: 140.4 },
+  { z: -4.1, percentile: 0.00197, height: 141.1 },
+  { z: -4.0, percentile: 0.00317, height: 141.9 },
+  { z: -3.9, percentile: 0.00491, height: 142.6 },
+  { z: -3.8, percentile: 0.00723, height: 143.4 },
+  { z: -3.7, percentile: 0.0108, height: 144.1 },
+  { z: -3.6, percentile: 0.0159, height: 144.8 },
+  { z: -3.5, percentile: 0.0233, height: 145.6 },
+  { z: -3.4, percentile: 0.0338, height: 146.3 },
+  { z: -3.3, percentile: 0.0483, height: 147.1 },
+  { z: -3.2, percentile: 0.0687, height: 147.8 },
+  { z: -3.1, percentile: 0.0968, height: 148.5 },
+  { z: -3.0, percentile: 0.135, height: 149.3 },
+  { z: -2.9, percentile: 0.187, height: 150.0 },
+  { z: -2.8, percentile: 0.256, height: 150.8 },
+  { z: -2.7, percentile: 0.347, height: 151.5 },
+  { z: -2.6, percentile: 0.467, height: 152.3 },
+  { z: -2.5, percentile: 0.621, height: 153.0 },
+  { z: -2.4, percentile: 0.820, height: 153.7 },
+  { z: -2.3, percentile: 1.072, height: 154.5 },
+  { z: -2.2, percentile: 1.391, height: 155.2 },
+  { z: -2.1, percentile: 1.786, height: 155.9 },
+  { z: -2.0, percentile: 2.275, height: 156.7 },
+  { z: -1.9, percentile: 2.871, height: 157.4 },
+  { z: -1.8, percentile: 3.593, height: 158.2 },
+  { z: -1.7, percentile: 4.458, height: 158.9 },
+  { z: -1.6, percentile: 5.480, height: 159.7 },
+  { z: -1.5, percentile: 6.681, height: 160.4 },
+  { z: -1.4, percentile: 8.076, height: 161.1 },
+  { z: -1.3, percentile: 9.680, height: 161.9 },
+  { z: -1.2, percentile: 11.507, height: 162.6 },
+  { z: -1.1, percentile: 13.568, height: 163.4 },
+  { z: -1.0, percentile: 15.866, height: 164.1 },
+  { z: -0.9, percentile: 18.406, height: 164.8 },
+  { z: -0.8, percentile: 21.186, height: 165.6 },
+  { z: -0.7, percentile: 24.197, height: 166.3 },
+  { z: -0.6, percentile: 27.425, height: 167.1 },
+  { z: -0.5, percentile: 30.854, height: 167.8 },
+  { z: -0.4, percentile: 34.458, height: 168.5 },
+  { z: -0.3, percentile: 38.209, height: 169.3 },
+  { z: -0.2, percentile: 42.074, height: 170.0 },
+  { z: -0.1, percentile: 46.017, height: 170.8 },
+  { z: 0.0, percentile: 50.000, height: 171.5 },
+  { z: 0.1, percentile: 53.983, height: 172.2 },
+  { z: 0.2, percentile: 57.926, height: 173.0 },
+  { z: 0.3, percentile: 61.791, height: 173.7 },
+  { z: 0.4, percentile: 65.542, height: 174.5 },
+  { z: 0.5, percentile: 69.146, height: 175.2 },
+  { z: 0.6, percentile: 72.575, height: 175.9 },
+  { z: 0.7, percentile: 75.803, height: 176.7 },
+  { z: 0.8, percentile: 78.814, height: 177.4 },
+  { z: 0.9, percentile: 81.594, height: 178.2 },
+  { z: 1.0, percentile: 84.134, height: 178.9 },
+  { z: 1.1, percentile: 86.432, height: 179.6 },
+  { z: 1.2, percentile: 88.493, height: 180.4 },
+  { z: 1.3, percentile: 90.320, height: 181.1 },
+  { z: 1.4, percentile: 91.924, height: 181.9 },
+  { z: 1.5, percentile: 93.319, height: 182.6 },
+  { z: 1.6, percentile: 94.520, height: 183.3 },
+  { z: 1.7, percentile: 95.542, height: 184.1 },
+  { z: 1.8, percentile: 96.407, height: 184.8 },
+  { z: 1.9, percentile: 97.129, height: 185.6 },
+  { z: 2.0, percentile: 97.725, height: 186.3 },
+  { z: 2.1, percentile: 98.214, height: 187.0 },
+  { z: 2.2, percentile: 98.610, height: 187.8 },
+  { z: 2.3, percentile: 98.928, height: 188.5 },
+  { z: 2.4, percentile: 99.179, height: 189.3 },
+  { z: 2.5, percentile: 99.379, height: 190.0 },
+  { z: 2.6, percentile: 99.534, height: 190.7 },
+  { z: 2.7, percentile: 99.653, height: 191.5 },
+  { z: 2.8, percentile: 99.744, height: 192.2 },
+  { z: 2.9, percentile: 99.813, height: 193.0 },
+  { z: 3.0, percentile: 99.865, height: 193.7 },
+  { z: 3.1, percentile: 99.903, height: 194.4 },
+  { z: 3.2, percentile: 99.931, height: 195.2 },
+  { z: 3.3, percentile: 99.952, height: 195.9 },
+  { z: 3.4, percentile: 99.966, height: 196.7 },
+  { z: 3.5, percentile: 99.977, height: 197.4 },
+  { z: 3.6, percentile: 99.984, height: 198.1 },
+  { z: 3.7, percentile: 99.989, height: 198.9 },
+  { z: 3.8, percentile: 99.993, height: 199.6 },
+  { z: 3.9, percentile: 99.995, height: 200.4 },
+  { z: 4.0, percentile: 99.997, height: 201.1 },
+  { z: 4.1, percentile: 99.998, height: 201.8 },
+  { z: 4.2, percentile: 99.9987, height: 202.6 },
+  { z: 4.3, percentile: 99.99915, height: 203.3 },
+  { z: 4.4, percentile: 99.99946, height: 204.1 },
+  { z: 4.5, percentile: 99.99966, height: 204.8 },
+  { z: 4.6, percentile: 99.99980, height: 205.5 },
+  { z: 4.7, percentile: 99.99987, height: 206.3 },
+  { z: 4.8, percentile: 99.99992, height: 207.0 },
+  { z: 4.9, percentile: 99.99995, height: 207.8 },
+  { z: 5.0, percentile: 99.999971, height: 208.5 }
+
+];
+
+
+/* ============================================================
+   FACE Z TABLE
+   ============================================================ */
+
+const faceTable = [
+
+  { z: -5.0, percentile: 0.0000287 },
+  { z: -4.5, percentile: 0.000339 },
+  { z: -4.0, percentile: 0.00317 },
+  { z: -3.5, percentile: 0.0233 },
+  { z: -3.0, percentile: 0.135 },
+  { z: -2.5, percentile: 0.621 },
+  { z: -2.0, percentile: 2.275 },
+  { z: -1.5, percentile: 6.681 },
+  { z: -1.0, percentile: 15.866 },
+  { z: -0.5, percentile: 30.854 },
+  { z: 0.0, percentile: 50.000 },
+  { z: 0.5, percentile: 69.146 },
+  { z: 1.0, percentile: 84.134 },
+  { z: 1.5, percentile: 93.319 },
+  { z: 2.0, percentile: 97.725 },
+  { z: 2.5, percentile: 99.379 },
+  { z: 3.0, percentile: 99.865 },
+  { z: 3.5, percentile: 99.977 },
+  { z: 4.0, percentile: 99.997 },
+  { z: 4.5, percentile: 99.99966 },
+  { z: 5.0, percentile: 99.999971 }
+
+];
+
+
+/* ============================================================
+   RATING / S OVERALL REFERENCE TABLE
+   ============================================================ */
+
+const ratingTable = [
+
+  {
+    rating: 0.00,
+    z: -8,
+    percentile: 0.000000000000062,
+    rarityNumber: 1.61e15,
+    s: -10.63
+  },
+
+  {
+    rating: 0.25,
+    z: -7,
+    percentile: 0.000000000128,
+    rarityNumber: 7.81e11,
+    s: -8.0
+  },
+
+  {
+    rating: 0.50,
+    z: -6,
+    percentile: 0.0000000987,
+    rarityNumber: 1.01e9,
+    s: -7.0
+  },
+
+  {
+    rating: 0.75,
+    z: -5,
+    percentile: 0.0000287,
+    rarityNumber: 3.49e6,
+    s: -5.0
+  },
+
+  {
+    rating: 1.00,
+    z: -4,
+    percentile: 0.00317,
+    rarityNumber: 31574,
+    s: -4.0
+  },
+
+  {
+    rating: 1.50,
+    z: -3,
+    percentile: 0.135,
+    rarityNumber: 741,
+    s: -2.5
+  },
+
+  {
+    rating: 2.00,
+    z: -2,
+    percentile: 2.275,
+    rarityNumber: 44,
+    s: -1.5
+  },
+
+  {
+    rating: 3.00,
+    z: -1,
+    percentile: 15.87,
+    rarityNumber: 6.30,
+    s: -0.5
+  },
+
+  {
+    rating: 4.00,
+    z: 0,
+    percentile: 50.00,
+    rarityNumber: 2,
+    s: 0.0
+  },
+
+  {
+    rating: 5.00,
+    z: 1,
+    percentile: 84.13,
+    rarityNumber: 6.30,
+    s: 0.5
+  },
+
+  {
+    rating: 6.00,
+    z: 2,
+    percentile: 97.725,
+    rarityNumber: 44,
+    s: 1.5
+  },
+
+  {
+    rating: 6.50,
+    z: 3,
+    percentile: 99.865,
+    rarityNumber: 741,
+    s: 2.5
+  },
+
+  {
+    rating: 7.00,
+    z: 4,
+    percentile: 99.99683,
+    rarityNumber: 31574,
+    s: 4.0
+  },
+
+  {
+    rating: 7.25,
+    z: 5,
+    percentile: 99.9999713,
+    rarityNumber: 3.49e6,
+    s: 5.0
+  },
+
+  {
+    rating: 7.50,
+    z: 6,
+    percentile: 99.9999999013,
+    rarityNumber: 1.01e9,
+    s: 7.0
+  },
+
+  {
+    rating: 7.75,
+    z: 7,
+    percentile: 99.999999999872,
+    rarityNumber: 7.81e11,
+    s: 8.0
+  },
+
+  {
+    rating: 8.00,
+    z: 8,
+    percentile: 99.99999999999994,
+    rarityNumber: 1.61e15,
+    s: 9.9
+  }
+
+];
+
+
+/* ============================================================
+   INTERPOLATION
+   ============================================================ */
+
+function interpolateZFromValue(
+  value,
+  table,
+  valueKey
+) {
+
+  if (value <= table[0][valueKey]) {
+    return table[0].z;
+  }
+
+  if (value >= table[table.length - 1][valueKey]) {
+    return table[table.length - 1].z;
+  }
+
+  for (let i = 0; i < table.length - 1; i++) {
+
+    const lower = table[i];
+    const upper = table[i + 1];
+
+    if (
+      value >= lower[valueKey] &&
+      value <= upper[valueKey]
+    ) {
+
+      const fraction =
+        (value - lower[valueKey]) /
+        (upper[valueKey] - lower[valueKey]);
+
+      return (
+        lower.z +
+        fraction *
+        (upper.z - lower.z)
+      );
+
+    }
+
+  }
+
+}
+
+
+function interpolateZFromPercentile(
+  percentile,
+  table
+) {
+
+  if (percentile <= table[0].percentile) {
+    return table[0].z;
+  }
+
+  if (percentile >= table[table.length - 1].percentile) {
+    return table[table.length - 1].z;
+  }
+
+  for (let i = 0; i < table.length - 1; i++) {
+
+    const lower = table[i];
+    const upper = table[i + 1];
+
+    if (
+      percentile >= lower.percentile &&
+      percentile <= upper.percentile
+    ) {
+
+      const fraction =
+        (percentile - lower.percentile) /
+        (upper.percentile - lower.percentile);
+
+      return (
+        lower.z +
+        fraction *
+        (upper.z - lower.z)
+      );
+
+    }
+
+  }
+
+}
+
+
+function interpolatePercentileFromValue(
+  value,
+  table,
+  valueKey
+) {
+
+  if (value <= table[0][valueKey]) {
+    return table[0].percentile;
+  }
+
+  if (value >= table[table.length - 1][valueKey]) {
+    return table[table.length - 1].percentile;
+  }
+
+  for (let i = 0; i < table.length - 1; i++) {
+
+    const lower = table[i];
+    const upper = table[i + 1];
+
+    if (
+      value >= lower[valueKey] &&
+      value <= upper[valueKey]
+    ) {
+
+      const fraction =
+        (value - lower[valueKey]) /
+        (upper[valueKey] - lower[valueKey]);
+
+      return (
+        lower.percentile +
+        fraction *
+        (upper.percentile - lower.percentile)
+      );
+
+    }
+
+  }
+
+}
+
+
+/* ============================================================
+   IQ → Z
+   ============================================================ */
+
+function iqToZ(iq) {
+
+  return {
+
+    z:
+      interpolateZFromValue(
+        iq,
+        iqTable,
+        "iq"
+      ),
+
+    percentile:
+      interpolatePercentileFromValue(
+        iq,
+        iqTable,
+        "iq"
+      )
+
+  };
+
+}
+
+
+/* ============================================================
+   HEIGHT → Z
+   ============================================================ */
+
+function heightToZ(height) {
+
+  return {
+
+    z:
+      interpolateZFromValue(
+        height,
+        heightTable,
+        "height"
+      ),
+
+    percentile:
+      interpolatePercentileFromValue(
+        height,
+        heightTable,
+        "height"
+      )
+
+  };
+
+}
+
+
+/* ============================================================
+   FACE → Z
+   ============================================================ */
+
+function faceToZ(face) {
+
+  return {
+
+    z:
+      interpolateZFromPercentile(
+        face,
+        faceTable
+      ),
+
+    percentile: face
+
+  };
+
+}
+
+
+/* ============================================================
+   SIGNED POWER
+   ============================================================ */
+
+function signedPow(
+  z,
+  exponent
+) {
+
+  if (z === 0) {
+    return 0;
+  }
+
+  return (
+    Math.sign(z) *
+    Math.pow(
+      Math.abs(z),
+      exponent
+    )
+  );
+
+}
+
+
+/* ============================================================
+   S → PI TRANSFORMATION
+
+   PIECEWISE-LINEAR FORMULA
+
+   Reference points:
+
+   S = −10.63 → PI 0.00
+   S = −8.00  → PI 0.25
+   S = −7.00  → PI 0.50
+   S = −5.00  → PI 0.75
+   S = −4.00  → PI 1.00
+   S = −2.50  → PI 1.50
+   S = −1.50  → PI 2.00
+   S = −0.50  → PI 3.00
+   S =  0.00  → PI 4.00
+   S =  0.50  → PI 5.00
+   S =  1.50  → PI 6.00
+   S =  2.50  → PI 6.50
+   S =  4.00  → PI 7.00
+   S =  5.00  → PI 7.25
+   S =  7.00  → PI 7.50
+   S =  8.00  → PI 7.75
+   S =  9.90  → PI 8.00
+
+   ============================================================ */
+
+function calculatePI(S) {
+
+
+  /* −10.63 ≤ S < −8 */
+
+  if (S < -8) {
+
+    return (
+      0.25 *
+      (S + 10.63) /
+      2.63
+    );
+
+  }
+
+
+  /* −8 ≤ S < −7 */
+
+  if (S < -7) {
+
+    return (
+      0.25 +
+      0.25 *
+      (S + 8)
+    );
+
+  }
+
+
+  /* −7 ≤ S < −5 */
+
+  if (S < -5) {
+
+    return (
+      0.50 +
+      0.125 *
+      (S + 7)
+    );
+
+  }
+
+
+  /* −5 ≤ S < −4 */
+
+  if (S < -4) {
+
+    return (
+      0.75 +
+      0.25 *
+      (S + 5)
+    );
+
+  }
+
+
+  /* −4 ≤ S < −2.5 */
+
+  if (S < -2.5) {
+
+    return (
+      1.00 +
+      (1 / 3) *
+      (S + 4)
+    );
+
+  }
+
+
+  /* −2.5 ≤ S < −1.5 */
+
+  if (S < -1.5) {
+
+    return (
+      1.50 +
+      0.50 *
+      (S + 2.5)
+    );
+
+  }
+
+
+  /* −1.5 ≤ S < −0.5 */
+
+  if (S < -0.5) {
+
+    return (
+      2.00 +
+      (S + 1.5)
+    );
+
+  }
+
+
+  /* −0.5 ≤ S < 0 */
+
+  if (S < 0) {
+
+    return (
+      3.00 +
+      2 *
+      (S + 0.5)
+    );
+
+  }
+
+
+  /* 0 ≤ S < 0.5 */
+
+  if (S < 0.5) {
+
+    return (
+      4.00 +
+      2 *
+      S
+    );
+
+  }
+
+
+  /* 0.5 ≤ S < 1.5 */
+
+  if (S < 1.5) {
+
+    return (
+      5.00 +
+      (S - 0.5)
+    );
+
+  }
+
+
+  /* 1.5 ≤ S < 2.5 */
+
+  if (S < 2.5) {
+
+    return (
+      6.00 +
+      0.50 *
+      (S - 1.5)
+    );
+
+  }
+
+
+  /* 2.5 ≤ S < 4 */
+
+  if (S < 4) {
+
+    return (
+      6.50 +
+      (1 / 3) *
+      (S - 2.5)
+    );
+
+  }
+
+
+  /* 4 ≤ S < 5 */
+
+  if (S < 5) {
+
+    return (
+      7.00 +
+      0.25 *
+      (S - 4)
+    );
+
+  }
+
+
+  /* 5 ≤ S < 7 */
+
+  if (S < 7) {
+
+    return (
+      7.25 +
+      0.125 *
+      (S - 5)
+    );
+
+  }
+
+
+  /* 7 ≤ S < 8 */
+
+  if (S < 8) {
+
+    return (
+      7.50 +
+      0.25 *
+      (S - 7)
+    );
+
+  }
+
+
+  /* 8 ≤ S ≤ 9.9 */
+
+  return (
+    7.75 +
+    (0.25 / 1.9) *
+    (S - 8)
+  );
+
+}
+
+
+/* ============================================================
+   PI → POPULATION PERCENTILE
+   ============================================================ */
+
+function getPIPopulationPercentile(PI) {
+
+  if (PI <= ratingTable[0].rating) {
+    return ratingTable[0].percentile;
+  }
+
+  if (PI >= ratingTable[ratingTable.length - 1].rating) {
+    return ratingTable[ratingTable.length - 1].percentile;
+  }
+
+
+  for (let i = 0; i < ratingTable.length - 1; i++) {
+
+    const lower = ratingTable[i];
+    const upper = ratingTable[i + 1];
+
+
+    if (
+      PI >= lower.rating &&
+      PI <= upper.rating
+    ) {
+
+      const fraction =
+        (
+          PI - lower.rating
+        )
+        /
+        (
+          upper.rating - lower.rating
+        );
+
+
+      let lowerRarity;
+      let upperRarity;
+
+
+      if (lower.rating < 4) {
+
+        lowerRarity =
+          100 /
+          lower.percentile;
+
+      } else if (lower.rating > 4) {
+
+        lowerRarity =
+          100 /
+          (100 - lower.percentile);
+
+      } else {
+
+        lowerRarity = 2;
+
+      }
+
+
+      if (upper.rating < 4) {
+
+        upperRarity =
+          100 /
+          upper.percentile;
+
+      } else if (upper.rating > 4) {
+
+        upperRarity =
+          100 /
+          (100 - upper.percentile);
+
+      } else {
+
+        upperRarity = 2;
+
+      }
+
+
+      const logLower =
+        Math.log10(lowerRarity);
+
+      const logUpper =
+        Math.log10(upperRarity);
+
+
+      const logRarity =
+        logLower +
+        fraction *
+        (logUpper - logLower);
+
+
+      const rarity =
+        Math.pow(
+          10,
+          logRarity
+        );
+
+
+      if (PI < 4) {
+
+        return 100 / rarity;
+
+      }
+
+
+      if (PI > 4) {
+
+        return 100 - (100 / rarity);
+
+      }
+
+
+      return 50;
+
+    }
+
+  }
+
+
+  return 50;
+
+}
+
+
+/* ============================================================
+   POPULATION PERCENTILE → RARITY NUMBER
+   ============================================================ */
+
+function getPIRarityNumber(
+  percentile
+) {
+
+  if (!Number.isFinite(percentile)) {
+    return Infinity;
+  }
+
+
+  if (percentile === 50) {
+    return 2;
+  }
+
+
+  if (percentile < 50) {
+
+    return 100 / percentile;
+
+  }
+
+
+  return (
+    100 /
+    (100 - percentile)
+  );
+
+}
+
+
+/* ============================================================
+   FORMAT RARITY NUMBER
+   ============================================================ */
+
+function formatRarityNumber(
+  rarity
+) {
+
+  if (!Number.isFinite(rarity)) {
+
+    return "1 in ∞ people";
+
+  }
+
+
+  if (rarity >= 1e15) {
+
+    return "1 in " +
+      (rarity / 1e15).toFixed(2) +
+      " quadrillion people";
+
+  }
+
+
+  if (rarity >= 1e12) {
+
+    return "1 in " +
+      (rarity / 1e12).toFixed(2) +
+      " trillion people";
+
+  }
+
+
+  if (rarity >= 1e9) {
+
+    return "1 in " +
+      (rarity / 1e9).toFixed(2) +
+      " billion people";
+
+  }
+
+
+  if (rarity >= 1e6) {
+
+    return "1 in " +
+      (rarity / 1e6).toFixed(2) +
+      " million people";
+
+  }
+
+
+  if (rarity >= 1000) {
+
+    return "1 in " +
+      (rarity / 1000).toFixed(2) +
+      " thousand people";
+
+  }
+
+
+  if (rarity >= 100) {
+
+    return "1 in " +
+      rarity.toFixed(0) +
+      " people";
+
+  }
+
+
+  if (rarity >= 10) {
+
+    return "1 in " +
+      rarity.toFixed(1) +
+      " people";
+
+  }
+
+
+  return "1 in " +
+    rarity.toFixed(2) +
+    " people";
+
+}
+
+
+/* ============================================================
+   VALIDATION
+   ============================================================ */
+
+function validateInput(
+  value,
+  min,
+  max,
+  errorElement,
+  inputElement,
+  message
+) {
+
+  const valid =
+    Number.isFinite(value) &&
+    value >= min &&
+    value <= max;
+
+
+  if (!valid) {
+
+    errorElement.textContent =
+      message;
+
+    inputElement.classList.add(
+      "invalid"
+    );
+
+  } else {
+
+    errorElement.textContent =
+      "";
+
+    inputElement.classList.remove(
+      "invalid"
+    );
+
+  }
+
+
+  return valid;
+
+}
+
+
+/* ============================================================
+   MAIN CALCULATOR
+   ============================================================ */
+
+function calculate() {
+
+  const iqInput =
+    document.getElementById(
+      "iqInput"
+    );
+
+  const heightInput =
+    document.getElementById(
+      "heightInput"
+    );
+
+  const faceInput =
+    document.getElementById(
+      "faceInput"
+    );
+
+
+  const iqError =
+    document.getElementById(
+      "iqError"
+    );
+
+  const heightError =
+    document.getElementById(
+      "heightError"
+    );
+
+  const faceError =
+    document.getElementById(
+      "faceError"
+    );
+
+
+  const iq =
+    parseFloat(
+      iqInput.value
+    );
+
+  const height =
+    parseFloat(
+      heightInput.value
+    );
+
+  const face =
+    parseFloat(
+      faceInput.value
+    );
+
+
+  /* ==========================================================
+     VALIDATION
+     ========================================================== */
+
+  const iqValid =
+    validateInput(
+      iq,
+      25,
+      175,
+      iqError,
+      iqInput,
+      "Must be between 25–175 IQ"
+    );
+
+
+  const heightValid =
+    validateInput(
+      height,
+      134.5,
+      208.5,
+      heightError,
+      heightInput,
+      "Must be between 134.5–208.5 cm"
+    );
+
+
+  const faceValid =
+    validateInput(
+      face,
+      0.0000287,
+      99.999971,
+      faceError,
+      faceInput,
+      "Must be between 0.0000287–99.999971%"
+    );
+
+
+  if (
+    !iqValid ||
+    !heightValid ||
+    !faceValid
+  ) {
+
+    return;
+
+  }
+
+
+  /* ==========================================================
+     CONVERT INPUTS TO Z
+     ========================================================== */
+
+  const iqResult =
+    iqToZ(iq);
+
+  const heightResult =
+    heightToZ(height);
+
+  const faceResult =
+    faceToZ(face);
+
+
+  /* ==========================================================
+     LIMIT Z TO −5 ≤ Z ≤ +5
+     ========================================================== */
+
+  const ZIQ =
+    Math.max(
+      -5,
+      Math.min(
+        5,
+        iqResult.z
+      )
+    );
+
+
+  const ZH =
+    Math.max(
+      -5,
+      Math.min(
+        5,
+        heightResult.z
+      )
+    );
+
+
+  const ZF =
+    Math.max(
+      -5,
+      Math.min(
+        5,
+        faceResult.z
+      )
+    );
+
+
+  /* ==========================================================
+     PILLAR SCORES
+     ========================================================== */
+
+  const SIQ =
+    signedPow(
+      ZIQ,
+      1.5
+    );
+
+
+  let SH;
+
+
+  if (ZH >= 0) {
+
+    SH =
+      0.72 *
+      Math.pow(
+        ZH,
+        1.14
+      );
+
+  } else {
+
+    SH =
+      -1.45 *
+      Math.pow(
+        Math.abs(ZH),
+        0.95
+      );
+
+  }
+
+
+  const SF =
+    signedPow(
+      ZF,
+      1.64
+    );
+
+
+  /* ==========================================================
+     OVERALL S SCORE
+     ========================================================== */
+
+  const S =
+    (
+      SIQ +
+      SH +
+      SF
+    ) / 3;
+
+
+  /* ==========================================================
+     FINAL PI
+
+     New piecewise-linear conversion.
+     ========================================================== */
+
+  let PI =
+    calculatePI(S);
+
+
+  PI =
+    Math.max(
+      0,
+      Math.min(
+        8,
+        PI
+      )
+    );
+
+
+  /* ==========================================================
+     POPULATION PERCENTILE
+     ========================================================== */
+
+  const populationPercentile =
+    getPIPopulationPercentile(
+      PI
+    );
+
+
+  /* ==========================================================
+     RARITY
+     ========================================================== */
+
+  const piRarityNumber =
+    getPIRarityNumber(
+      populationPercentile
+    );
+
+
+  /* ==========================================================
+     UPDATE IQ
+     ========================================================== */
+
+  document.getElementById(
+    "iqZ"
+  ).textContent =
+    ZIQ.toFixed(2);
+
+
+  document.getElementById(
+    "iqZ2"
+  ).textContent =
+    ZIQ.toFixed(2);
+
+
+  document.getElementById(
+    "iqPercentile"
+  ).textContent =
+    iqResult.percentile.toFixed(6) +
+    "%";
+
+
+  /* ==========================================================
+     UPDATE HEIGHT
+     ========================================================== */
+
+  document.getElementById(
+    "heightZ"
+  ).textContent =
+    ZH.toFixed(2);
+
+
+  document.getElementById(
+    "heightZ2"
+  ).textContent =
+    ZH.toFixed(2);
+
+
+  document.getElementById(
+    "heightPercentile"
+  ).textContent =
+    heightResult.percentile.toFixed(6) +
+    "%";
+
+
+  /* ==========================================================
+     UPDATE FACE
+     ========================================================== */
+
+  document.getElementById(
+    "faceZDisplay"
+  ).textContent =
+    ZF.toFixed(2);
+
+
+  document.getElementById(
+    "faceZ2"
+  ).textContent =
+    ZF.toFixed(2);
+
+
+  document.getElementById(
+    "facePercentileDisplay"
+  ).textContent =
+    face.toFixed(6) +
+    "%";
+
+
+  /* ==========================================================
+     UPDATE PILLAR SCORES
+     ========================================================== */
+
+  document.getElementById(
+    "siq"
+  ).textContent =
+    SIQ.toFixed(2);
+
+
+  document.getElementById(
+    "sh"
+  ).textContent =
+    SH.toFixed(2);
+
+
+  document.getElementById(
+    "sf"
+  ).textContent =
+    SF.toFixed(2);
+
+
+  document.getElementById(
+    "soverall"
+  ).textContent =
+    S.toFixed(2);
+
+
+  /* ==========================================================
+     UPDATE PI
+     ========================================================== */
+
+  document.getElementById(
+    "pi"
+  ).textContent =
+    PI.toFixed(2);
+
+
+  /* ==========================================================
+     UPDATE POPULATION PERCENTILE
+     ========================================================== */
+
+  document.getElementById(
+    "piPercentile"
+  ).textContent =
+    formatPopulationPercentile(
+      populationPercentile
+    );
+
+
+  /* ==========================================================
+     UPDATE RARITY
+     ========================================================== */
+
+  document.getElementById(
+    "piRarity"
+  ).textContent =
+    formatRarityNumber(
+      piRarityNumber
+    );
+
+
+  /* ==========================================================
+     UPDATE GAUGE
+     ========================================================== */
+
+  document.getElementById(
+    "gauge"
+  ).style.width =
+    (
+      PI / 8 * 100
+    ) + "%";
+
+}
+
+
+/* ============================================================
+   FORMAT POPULATION PERCENTILE
+   ============================================================ */
+
+function formatPopulationPercentile(
+  percentile
+) {
+
+  if (percentile < 0.000001) {
+
+    return "~0.000000%";
+
+  }
+
+
+  if (percentile < 0.001) {
+
+    return "~" +
+      percentile.toFixed(6) +
+      "%";
+
+  }
+
+
+  if (percentile < 0.01) {
+
+    return "~" +
+      percentile.toFixed(5) +
+      "%";
+
+  }
+
+
+  if (percentile < 0.1) {
+
+    return "~" +
+      percentile.toFixed(4) +
+      "%";
+
+  }
+
+
+  if (percentile < 1) {
+
+    return "~" +
+      percentile.toFixed(3) +
+      "%";
+
+  }
+
+
+  if (percentile < 10) {
+
+    return "~" +
+      percentile.toFixed(2) +
+      "%";
+
+  }
+
+
+  if (percentile < 99) {
+
+    return "~" +
+      percentile.toFixed(2) +
+      "%";
+
+  }
+
+
+  if (percentile < 99.999) {
+
+    return "~" +
+      percentile.toFixed(4) +
+      "%";
+
+  }
+
+
+  return "≈100%";
+
+}
+
+
+/* ============================================================
+   INPUT EVENTS
+   ============================================================ */
+
+document
+  .getElementById(
+    "iqInput"
+  )
+  .addEventListener(
+    "input",
+    calculate
+  );
+
+
+document
+  .getElementById(
+    "heightInput"
+  )
+  .addEventListener(
+    "input",
+    calculate
+  );
+
+
+document
+  .getElementById(
+    "faceInput"
+  )
+  .addEventListener(
+    "input",
+    calculate
+  );
+
+
+/* ============================================================
+   INITIAL CALCULATION
+   ============================================================ */
+
+calculate();
+
+</script>
+
+
+</body>
+
+</html>
